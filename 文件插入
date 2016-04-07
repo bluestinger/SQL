@@ -1,0 +1,16 @@
+
+
+
+SELECT TOP 1000 [EntityID]
+      ,[PID]
+      ,[LGTD]
+      ,[LTTD]
+      ,[DEM]
+  FROM [GB_RES_MODEL].[dbo].[W_DemPoint_B]
+  
+  
+  BULK insert [GB_RES_MODEL].[dbo].W_DemPoint_B FROM 
+  'D:\Users\Administrator\Desktop\prj\src_2013\dem脚本\10\src\\MosaicDEM.txt' 
+  WITH(FIELDTERMINATOR = ',',ROWTERMINATOR = '\r\n')
+
+
