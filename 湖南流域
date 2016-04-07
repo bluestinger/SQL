@@ -1,0 +1,75 @@
+	  
+	  
+ declare @pid int
+ set @pid = 265
+ 
+ --上游流域
+ select * from W_UpStream_B where EntityID in ('hanshou_R70530W70530')
+ 
+ 
+ --补充流域
+  insert into [TZX_RES_MODEL].[dbo].prj_E_E_B (Pid,Entityid)
+  SELECT 321,[Entityid] FROM [TZX_RES_MODEL].[dbo].E_E_B where TNODE
+  in('25502','30398','32072')
+ 
+	  
+--补充流域
+insert into Prj_E_E_B (PID,EntityID)
+   
+SELECT 367,[Entityid]
+FROM [TZX_RES_MODEL].[dbo].E_E_B where TNODE in(
+	'17328','14795')
+ and [Entityid] not in ('lishui_R30320','lishui_R30320W30320','lishui_R14300W14300') 
+
+--迭代求路径
+SELECT 265,fnode
+	FROM [TZX_RES_MODEL].[dbo].E_E_B where TNODE in(
+'17340') and fnode != '-1'
+
+
+--直接插入
+  insert into Prj_E_E_B (PID,EntityID) values(294,'xiangjiang_RES98_F_R197190W197190')
+  insert into Prj_E_E_B (PID,EntityID) values(@pid,'xiangjiang_R28570')
+  insert into Prj_E_E_B (PID,EntityID) values(@pid,'xiangjiang_RES118RIV3_R21370')
+  insert into Prj_E_E_B (PID,EntityID) values(@pid,'hanshou_RES41RIV2_R108390')
+       
+ 
+ --补充测站
+
+select * 
+delete from Prj_RainStation_B where PID = 265
+
+ declare @pid  int
+ set @pid = 265
+ 
+ insert into Prj_RainStation_B 
+ select 265, R_STCD from ( 
+  select  distinct(f.R_STCD) FROM [TZX_RES_MODEL].[dbo].[W_UpStream_B] h join
+  [TZX_RES_MODEL].[dbo].Prj_Map_RainSt f  on h.UpEntityID = f.W_STCD
+  where h.EntityID in 
+ (select distinct(EntityID) from [TZX_RES_MODEL].[dbo].E_E_B where TNODE in
+ ( '24556','24646','26164','26542','26602','19499','26746','25354','19625','27964','26908','25486','19529','28066','25534','19661','28102','26206','19721','19457','28132','24280','19751','19523','28192','19805','28240','19811','27934','28270','28276','28282','28306','28348' )
+ ) 
+ )
+ --group by R_STCD having (COUNT(*))>1
+ )
+  
+ 
+ 
+ 
+ --删除错误插入
+delete from Prj_E_E_B where [Entityid] in
+('lishui_R9910W9910','
+lishui_R9910W9910','
+lishui_R740W740',
+'lishui_RES12_F_R4990','
+lishui_R9910','
+lishui_R740',
+'lishui_R9910')
+and pid = 367
+(SELECT [Entityid]
+FROM [TZX_RES_MODEL].[dbo].E_E_B where TNODE in(
+	'27679'))
+
+and PID = @pid
+
