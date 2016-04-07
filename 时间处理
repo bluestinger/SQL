@@ -1,0 +1,47 @@
+
+
+
+use [RWDB]
+
+
+--字符串转换处理
+(SELECT [STCD]
+      ,[stm]
+      ,[ETM]
+      ,[DRP]
+      --,datediff(MINUTE,CONVERT(varchar(50),[stm], 120),CONVERT(varchar(50),[etm], 120))
+      ,CONVERT(varchar(50),[stm], 120) as ST
+      ,CONVERT(varchar(50),[etm], 120) as ET
+      , CONVERT(datetime,'1981-1-15 02:00', 120)
+ FROM [Table_DRP]  where STM is null) a
+ 
+--字符串截取处理
+ SELECT [STCD]
+      ,[stm]
+      ,[ETM]
+      ,[DRP]
+      --,left([stm],CHARINDEX(':',[stm]) - CHARINDEX(' ',[stm]))
+      --,RIGHT(':',len([stm]-CHARINDEX(':',[stm])-1))
+      ,SUBSTRING(STM,CHARINDEX(' ',[stm]),CHARINDEX(':',[stm])-CHARINDEX(' ',[stm]))
+FROM [Table_DRP]  where STM is null 
+      
+
+select ETM, DateAdd(day, 1, LEFT(ETM, CHARINDEX(' 24:', ETM)) + ' 00:00') from [Table_DRP] where  DATE2 is null
+      
+delete [Table_DRP] where ETM like '%.%'
+     
+---字符串更新处理
+ update [Table_DRP] set date2 = DateAdd(day, 1, LEFT(ETM, CHARINDEX(' 24:', ETM)) + ' 00:00')  where date2 is null and
+ ETM not like '%24:%'
+ 
+
+use [JX_RWDB]
+---时间逻辑错误更新
+SELECT STM, DATEadd (DAY,1,ETM)
+FROM [ST_PPTN_R_Temp] where STM > ETM
+  
+update [ST_PPTN_R_Temp] set ETM = DATEadd(DAY,1,ETM) FROM ST_PPTN_R_Temp] where STM > ETM
+  
+  
+  
+  
