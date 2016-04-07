@@ -1,0 +1,57 @@
+-- M
+  use ZHAOYUAN_RES_MODEL
+  --流域
+   update b set b.[Wm] = a.[Wm]
+			,b.Pat = a.Pat
+			,b.Rt = a.Rt
+			,b.RefTime = a.RefTime
+			,b.A = a.A
+			,b.Ka = a.Ka
+			,b.tparm = a.tparm
+			,b.Impervious = a.Impervious
+  FROM ZHAOYUAN_RES_MODEL.[dbo].[E_SubBasin_M] b, [SD_W1261].[dbo].[E_SubBasin_M] a
+  
+  
+  --河道
+   update b set b.[n] = a.[n]
+  FROM ZHAOYUAN_RES_MODEL.[dbo].[E_Reach_M] b, [SD_W1261].[dbo].[E_Reach_M] a
+  
+  
+  
+  --初损后损
+  --W_BaseflowRecession_M,W_LossRateInitialConstant_M
+   update b set b.[ConstantRate] = a.[ConstantRate]
+	,b.[Impervious] = a.[Impervious]
+	,b.[InitialLoss] = a.[InitialLoss]
+  FROM ZHAOYUAN_RES_MODEL.[dbo].[W_LossRateInitialConstant_M] b, [SD_W1261].[dbo].[W_LossRateInitialConstant_M] a
+  
+    
+  
+  --新安江模型
+  ------------------------
+  update b set b.[WM] = a.WM
+	  , b.[WUM] = a.[WUM]
+      , b.[WLM]=a.[WLM]
+      , b.[K] = a.[K]
+      , b.[B]=a.[B]
+      , b.[C] = a.[C]
+      , b.[KG] = a.[KG]
+      , b.[KSS]=a.KSS
+      , b.[SM] = a.SM
+      , b.[EX] = a.EX
+      , b.[KKSS] = a.KKSS
+      , b.[KKG] = a.KKG
+      , b.[IMP] = a.IMP
+  from  [SD_W1261].[dbo].[W_XAJ_M] b, [SD_W1261].[dbo].[W_XAJ_M] a
+  
+  
+  
+  --陕北模型
+   update b set b.[SXN_Fc] = a.[SXN_Fc]
+	,b.SXN_BX = a.SXN_BX
+	,b.SXN_F0 = a.SXN_F0
+	,b.SXN_k = a.SXN_k
+  FROM ZHAOYUAN_RES_MODEL.[dbo].[W_SHANBEI_M] b, [SD_W1261].[dbo].[W_SHANBEI_M] a
+  
+   --河北模型
+   --W_HBRainFlood_M
