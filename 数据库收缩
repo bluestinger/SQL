@@ -1,0 +1,7 @@
+Backup Log WHALLDB_NEW with no_log
+go
+dump transaction WHALLDB_NEW with no_log
+go
+USE WHALLDB_NEW 
+DBCC SHRINKFILE (2)
+Go
