@@ -1,0 +1,29 @@
+
+
+
+SELECT [STCD]
+      ,[TM]
+      ,[Z]
+      ,[Q]
+  FROM [RWDB].[dbo].[tableName]where stcd in (62034000,
+62034500) order by tm
+
+
+select distinct stcd from [RWDB].[dbo].[tableName]
+
+
+select  [STCD]
+      ,[TM]
+      ,[Z]
+FROM [RWDB].[dbo].[tableName] where stcd = 62010800 and tm = '1981-01-15 02:00:00.000'
+group by stcd,tm,z having COUNT(1)>1
+      
+      
+delete a from [RWDB].[dbo].[tableName] a, (select c.stcd,c.tm, min(c.z) as  zz from [RWDB].[dbo].[tableName] c GROUP BY c.stcd,c.tm having count(1) >1) b where a.stcd=b.stcd and a.z > b.zz;
+
+
+  select distinct * into #t from [wanzai].[dbo].[ST_RIVER_R]
+truncate table [wanzai].[dbo].[ST_RIVER_R]
+insert into [wanzai].[dbo].[ST_RIVER_R] select * from #t
+
+
