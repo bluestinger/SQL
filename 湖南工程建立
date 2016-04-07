@@ -1,0 +1,104 @@
+
+
+
+SELECT TOP 1000 [EntityID]
+      ,[UpEntityID]
+  FROM [TZX_RES_MODEL].[dbo].[W_UpStream_B]
+  
+  
+  1 点 确定面  （测站，流域）
+  2 面 -> 多面  
+  3 面 -> 线
+   
+  
+  -------实验测试
+  SELECT TOP 1000 [EntityID]
+      ,[UpEntityID]
+  FROM [TZX_RES_MODEL].[dbo].[W_UpStream_B] where [EntityID] = 'hanshou_R48340W48340' 
+  
+  insert into [TZX_RES_MODEL].[dbo].Prj_E_E_B 
+  select UpEntityID from [TZX_RES_MODEL].[dbo].[W_UpStream_B] where [EntityID] = 'hanshou_R48340W48340'
+  
+  insert into [TZX_RES_MODEL].[dbo].Prj_RainStation_B
+  
+  
+  select * from [TZX_RES_MODEL].[dbo].[W_UpStream_B],[TZX_RES_MODEL].[dbo].Prj_HydroStation_B
+
+ ---------步奏
+ 
+ --pid,w_stcd
+  select b.PID, a.w_stcd from [TZX_RES_MODEL].[dbo].Prj_HydroStation_B b  join [TZX_RES_MODEL].[dbo].[Prj_Map] as a on a.s_STCD=b.[STCD]
+  
+ --pid,对应 wsh
+  select b.PID, a.w_stcd from [TZX_RES_MODEL].[dbo].Prj_HydroStation_B b  join [TZX_RES_MODEL].[dbo].[Prj_Map] as a on a.s_STCD=b.[STCD]
+ 
+ --pid,上游 wsh
+  SELECT d.PID, c.UpEntityID
+  FROM [TZX_RES_MODEL].[dbo].[W_UpStream_B] c join 
+  (select b.PID, a.w_stcd from [TZX_RES_MODEL].[dbo].Prj_HydroStation_B b  join [TZX_RES_MODEL].[dbo].[Prj_Map] as a on a.s_STCD=b.[STCD]
+  )d on d.w_stcd  =c.EntityID order by PID
+  
+  
+  
+  --<map>  河道,流域 
+  SELECT distinct(e.[NAME]),f.name
+  FROM [TZX_RES_MODEL].[dbo].[River] e join [TZX_RES_MODEL].[dbo].[watershd] f on e.WSHID = f.WSHID and SUBSTRING(e.[NAME],0,CHARINDEX('_', e.[NAME])) = SUBSTRING(f.[NAME],0,CHARINDEX('_', f.[NAME]))
+ 
+ 
+ 
+ 
+ 
+ 
+ --插入新建工程/流域
+   insert into [TZX_RES_MODEL].[dbo].Prj_E_E_B([PID],[EntityID]) 
+  --流域内河道
+  SELECT  d.PID,c.UpEntityID
+  FROM [TZX_RES_MODEL].[dbo].[W_UpStream_B] c join 
+  (select b.PID, a.w_stcd from [TZX_RES_MODEL].[dbo].Prj_HydroStation_B b  join [TZX_RES_MODEL].[dbo].[Prj_Map] as a on a.s_STCD=b.[STCD]
+   and b.PID >194
+  )d on d.w_stcd  =c.EntityID 
+  
+  
+    
+  
+  
+  
+  --插入新建工程/河道
+  insert into [TZX_RES_MODEL].[dbo].Prj_E_E_B([PID]
+      ,[EntityID]) 
+  --pid,river
+  select PID, River from(
+  
+  --流域 -> 河道
+  SELECT distinct(e.[NAME]) as River, f.name as wshd
+  FROM [TZX_RES_MODEL].[dbo].[River] e join [TZX_RES_MODEL].[dbo].[watershd] f on e.WSHID = f.WSHID and SUBSTRING(e.[NAME],0,CHARINDEX('_', e.[NAME])) = SUBSTRING(f.[NAME],0,CHARINDEX('_', f.[NAME])))
+  as p  join
+  
+  --工程 -> 流域组
+  ( SELECT  d.PID,c.UpEntityID
+  FROM [TZX_RES_MODEL].[dbo].[W_UpStream_B] c join 
+  (select b.PID, a.w_stcd from [TZX_RES_MODEL].[dbo].Prj_HydroStation_B b  join [TZX_RES_MODEL].[dbo].[Prj_Map] as a on a.s_STCD=b.[STCD]
+  )d on d.w_stcd  =c.EntityID   
+  and d.PID > 194) 
+  
+  as h on p.wshd = h.UpEntityID
+  order by PID
+
+  
+  
+ --插入新建工程/雨量站
+   insert into [TZX_RES_MODEL].[dbo].Prj_RainStation_B
+   
+     --工程 -> 流域组
+   select pid, r_stcd from
+  ( SELECT  d.PID,c.UpEntityID
+  FROM [TZX_RES_MODEL].[dbo].[W_UpStream_B] c join 
+  (select b.PID, a.w_stcd from [TZX_RES_MODEL].[dbo].Prj_HydroStation_B b  join [TZX_RES_MODEL].[dbo].[Prj_Map] as a on a.s_STCD=b.[STCD]
+  )d on d.w_stcd  =c.EntityID   
+  and d.PID =92) as h join
+  [TZX_RES_MODEL].[dbo].Prj_Map_RainSt f  on h.UpEntityID = f.W_STCD
+  
+   
+
+
+
