@@ -1,0 +1,65 @@
+SET NUMERIC_ROUNDABORT OFF
+
+
+-- 1 临时表,delete数据
+create table #tmp([stcd] varchar(8),[tm] datetime,[intv] float)
+
+
+delete from #tmp
+
+-- 2 计算结果
+with cte as (
+select ROW_NUMBER() over(order by STCD,TM desc) id,stcd,tm,INTV from [ST_PPTN_R]
+),
+ t3 as(
+select 
+t2.STCD as stcd,isnull(t2.TM,0) as tm,(DATEDIFF(MI,t2.TM,t1.TM)/60 + DATEDIFF(MI,t2.TM,t1.TM)%60/100.0) as intv
+from cte t2
+left join cte t1
+on t1.id - 1= t2.id 
+)
+
+--3 插入临时表
+insert into #tmp(stcd,tm,intv)
+select t3.stcd, t3.tm,t3.intv from t3
+
+--4 查看
+select * from #tmp
+
+--4.0 将 float 转换为数据类型 numeric 时出现算术溢出错误.
+select intv from #tmp where intv >0 order by LEN(intv)
+
+-- 4.1
+select AA.STCD,AA.TM,AA.DRP,
+
+--BB.intv as intv 
+case 
+when bb.intv > 0 then 0
+when bb.intv < -10 then 0
+else -bb.intv end
+
+from [ST_PPTN_R] AA
+join #tmp BB on
+aa.STCD = BB.stcd and aa.TM = bb.tm
+
+
+--4.2更新
+update AA set aa.intv = -bb.intv from [ST_PPTN_R] AA
+join #tmp BB on
+aa.STCD = BB.stcd and aa.TM = bb.tm
+where bb.intv > -20 and bb.intv < 0
+
+
+-- 5 删除 #tmp
+
+drop table #tmp
+
+
+
+
+
+-- ect 
+UPDATE cte 
+set cte.INTV = t3.intv  --(DATEDIFF(MI,t2.TM,t1.TM)/60 + DATEDIFF(MI,t2.TM,t1.TM)%60/100.0)
+from cte,t3
+where t3.stcd = cte.stcd and t3.TM = cte.TM and t3.intv < 10
