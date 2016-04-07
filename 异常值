@@ -1,0 +1,15 @@
+
+update [Data] set Area = a.Area from stinfo a where [Data].STNM = a.STNM
+
+
+a/b join b/c on b = a/c
+
+
+洪峰模数
+order by Q desc去除异常值
+
+select a.STCD, b.STNM, max(Q)/b.Area, MAX(Q), b.AREA from HN_RWDB.dbo.ST_RIVER_R a, STINFO b 
+where a.STCD = b.STCD group by a.STCD, b.STNM,b.Area
+--having (max(Q)/b.Area  < 1 or max(Q)/b.Area  > 10)
+order by max(Q)/b.Area 
+
