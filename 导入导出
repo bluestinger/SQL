@@ -1,0 +1,8 @@
+USE master
+RESTORE DATABASE xingguo
+FROM DISK ='E:\DataBase\江西数据库2\xingguo'
+WITH MOVE 'xingguo' TO 'E:\DataBase\江西数据库2\xingguo_disk_file.mdf',
+MOVE'xingguo_log' TO 'E:\DataBase\江西数据库2\xingguo_disk_file_log.ldf',
+STATS=10,REPLACE
+
+RESTORE FILELISTONLY FROM DISK = N'E:\DataBase\江西数据库2\xingguo'
