@@ -1,0 +1,40 @@
+
+use [RWDB]
+
+
+--空数据处理
+SELECT  [name]
+      ,[STCD]
+      ,[year]
+      ,[STM]
+      ,[ETM]
+      ,[DRP]
+      ,[stm]
+      ,[etm]
+      ,[INTV]
+  FROM [Table_DRP] where  (stm) = null or etm  = null 
+  
+  
+ --选择时间逻辑错误项
+select stm,etm,day([etm]) , DateAdd(day, 1,etm), DATEDIFF(MI,stm,etm) as TD  ,DATEDIFF(MI,stm,etm)/60 + DATEDIFF(MI,stm,etm)%60/100 FROM [Table_DRP] where DATEDIFF(MI,stm,etm) < 0
+  
+
+update [Table_DRP] set stm = DATEADD(day, -1, DATEADD(month, -1, stm)),
+etm = DATEADD(day, -1, DATEADD(month, -1, etm))
+
+
+--更新时间逻辑错误
+update [Table_DRP] set etm = DateAdd(day, 1,etm) where DATEDIFF(MI,stm,etm) < 0
+update [Table_DRP] set [INTV] = (DATEDIFF(MI,stm,etm)/60 + DATEDIFF(MI,stm,etm)%60/100.0)
+
+
+--插入
+insert into [ST_PPTN_R]([STCD]
+      ,[TM]
+      ,[DRP]
+      ,[INTV])
+select [STCD]
+      ,[etm]
+      ,[DRP]
+      ,[INTV] from [Table_DRP] --where [etm] = null
+      
