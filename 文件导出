@@ -1,0 +1,6 @@
+
+exec master..xp_cmdshell 'bcp "
+select [TM],[Z],[Q] from RWDB.dbo.ST_RIVER_R
+where STCD = ''62008200'' and TM >= ''1970-08-17 11:00:00'' and TM <= ''1970-08-18 07:00:00''" 
+queryout 
+e:\SC\备份\AdoTest\Data\Q\米坪\19700817\实测数据.csv -c -t, -U"sa" -P"123"'
