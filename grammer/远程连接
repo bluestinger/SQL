@@ -1,0 +1,21 @@
+--建立数据库链接服务器
+EXEC sp_addlinkedserver
+ @server =N'SQLServerConn', --要创建的链接服务器别名
+ @srvproduct=N'SQLServer', --产品名称
+ @provider=N'SQLOLEDB.1', --OLE DB 驱动名称
+ @datasrc=N'ZYW-PC\SQL2014' --数据源oracle"ora10g"network"admin"tnsnames.ora查看
+ 
+ EXEC sp_addlinkedsrvlogin
+ 'SQLServerConn', --已建立的链接服务器名
+ 'false', -- 固定 */
+ NULL, --为每个登陆SQL SERVER的用户使用此链接服务器,则写用户名*/
+ 'sa', --帐号(oracle)
+ '123' --密码
+ 
+exec sp_serveroption 'SQLServerConn','rpc out','true'
+exec sp_serveroption 'SQLServerConn','rpc','true'
+
+---select * from openquery(SQLServerConn,'SELECT * FROM  fuliang.dbo.ST_RIVER_R')
+
+INSERT OPENQUERY(SQLServerConn,'SELECT *  FROM [fuliang].[dbo].[ST_RIVER_R]') SELECT * FROM fuliang.[dbo].[ST_RIVER_R]
+INSERT OPENQUERY(SQLServerConn,'SELECT *  FROM [fuliang].[dbo].[W_RESULT_R]') SELECT * FROM fuliang.[dbo].[W_RESULT_R]
